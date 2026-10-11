@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bazar Dor — Assignment 07
+
+Bazar Dor is a Next.js web application for the Programming Hero Assignment 07. The project uses the Next.js App Router, React, TypeScript, Tailwind CSS 4, and reusable UI components.
+
+## Tech Stack
+
+- Next.js `16.4.0`
+- React `19.3.0`
+- TypeScript `5`
+- Tailwind CSS `4`
+- ESLint `9`
+- Lucide React icons
 
 ## Getting Started
 
-First, run the development server:
+### 1. Requirements
+
+Install a compatible current LTS version of Node.js and npm. Confirm the installation:
+
+```bash
+node --version
+npm --version
+```
+
+### 2. Install dependencies
+
+Run these commands from the project root, where `package.json` is located:
+
+```bash
+npm install
+```
+
+### 3. Start the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser. Stop the server with `Ctrl+C`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the local development server |
+| `npm run lint` | Check code with ESLint |
+| `npm run build` | Create a production build |
+| `npm run start` | Serve the production build; run after `npm run build` |
 
-## Learn More
+Run checks before submitting:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run lint
+npm run build
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The assignment's updated API base URL is:
 
-## Deploy on Vercel
+`https://openapi.programming-hero.com/api/bazardor`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Use this updated endpoint for the assignment's API integration. Inspect the actual JSON response before deciding the exact fields to render; do not assume a response shape. Handle loading, empty data, and request errors in the UI.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+
+```text
+app/
+  globals.css       Global styles and Tailwind CSS setup
+  layout.tsx        Root layout and page metadata
+  page.tsx          Home page
+components/
+  ui/               Reusable UI components
+lib/
+  utils.ts          Shared utility functions
+public/             Static public assets
+```
+
+The project also includes the Bazar Dor design files and image assets in the project root. Keep these source assets while developing the assignment.
+
+## Git Workflow
+
+Make small commits that describe actual completed work. Before committing, inspect the changed files:
+
+```bash
+git status
+git diff
+```
+
+Stage only the files related to the task, then commit with a descriptive message, for example:
+
+```bash
+git add README.md
+git commit -m "docs: document Bazar Dor project setup"
+```
+
+Do not commit `node_modules`, `.next`, local environment secrets, or generated build output. Do not commit unrelated changes accidentally.
+
+## Deployment
+
+Deploy using a platform compatible with Next.js, such as Vercel. Configure any required environment variables in the deployment platform if the implementation later uses them. Verify the production build locally before submitting.
