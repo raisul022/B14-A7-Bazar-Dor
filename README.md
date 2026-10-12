@@ -1,101 +1,125 @@
-# Bazar Dor — Assignment 07
+# BazarDor — Assignment 07
 
-Bazar Dor is a Next.js web application for the Programming Hero Assignment 07. The project uses the Next.js App Router, React, TypeScript, Tailwind CSS 4, and reusable UI components.
+BazarDor is a Next.js web application developed for Programming Hero Assignment 07. It helps users explore product prices and compare market information through a responsive interface.
+
+## Features
+
+- Responsive navigation and homepage layout.
+- Product listing with search functionality.
+- Rising and falling product sections.
+- Category listing and category-based product filtering.
+- Product detail pages with price and market information.
+- Loading states, error handling, and retry options.
+- Bengali price formatting and reusable UI components.
 
 ## Tech Stack
 
-- Next.js `16.4.0`
-- React `19.3.0`
-- TypeScript `5`
-- Tailwind CSS `4`
-- ESLint `9`
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Better Auth (dependency installed; authentication setup is in progress)
 - Lucide React icons
 
 ## Getting Started
 
-### 1. Requirements
+### Requirements
 
-Install a compatible current LTS version of Node.js and npm. Confirm the installation:
+Install Node.js and npm. Verify the installation:
 
 ```bash
 node --version
 npm --version
 ```
 
-### 2. Install dependencies
-
-Run these commands from the project root, where `package.json` is located:
+### Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Start the development server
+### Start the development server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser. Stop the server with `Ctrl+C`.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+Stop the development server with `Ctrl+C`.
 
 ## Available Scripts
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the local development server |
-| `npm run lint` | Check code with ESLint |
+| Command | Description |
+|---|---|
+| `npm run dev` | Start the development server |
+| `npm run lint` | Check code using ESLint |
 | `npm run build` | Create a production build |
-| `npm run start` | Serve the production build; run after `npm run build` |
+| `npm run start` | Start the production server after building |
 
-Run checks before submitting:
+Before submitting, run:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-## API
+## API Integration
 
-The assignment's updated API base URL is:
+API base URL:
 
-`https://openapi.programming-hero.com/api/bazardor`
+```text
+https://openapi.programming-hero.com/api/bazardor
+```
 
-Use this updated endpoint for the assignment's API integration. Inspect the actual JSON response before deciding the exact fields to render; do not assume a response shape. Handle loading, empty data, and request errors in the UI.
+Endpoints used by the application include:
+
+- `GET /products` — retrieve products.
+- `GET /products?category=chal` — retrieve products filtered by category.
+- `GET /products/1` — retrieve a product by ID.
+- `GET /categories` — retrieve categories.
+- `GET /categories/chal` — retrieve category information.
+
+The application handles API responses and includes loading and error states.
 
 ## Project Structure
 
 ```text
 app/
-  globals.css       Global styles and Tailwind CSS setup
-  layout.tsx        Root layout and page metadata
-  page.tsx          Home page
+├── categories/
+│   ├── [slug]/
+│   │   └── page.tsx
+│   └── page.tsx
+├── products/
+│   └── [id]/
+│       └── page.tsx
+├── globals.css
+├── layout.tsx
+└── page.tsx
+
 components/
-  ui/               Reusable UI components
+└── ui/
+
 lib/
-  utils.ts          Shared utility functions
-public/             Static public assets
+├── api.ts
+└── utils.ts
+
+public/
+└── Static assets
 ```
 
-The project also includes the Bazar Dor design files and image assets in the project root. Keep these source assets while developing the assignment.
+## Quality Checks
+
+The ESLint check and production build have passed during development. Run them again after making further changes.
 
 ## Git Workflow
 
-Make small commits that describe actual completed work. Before committing, inspect the changed files:
+Use descriptive commits for completed features:
 
 ```bash
 git status
-git diff
-```
-
-Stage only the files related to the task, then commit with a descriptive message, for example:
-
-```bash
 git add README.md
-git commit -m "docs: document Bazar Dor project setup"
+git commit -m "docs: update project documentation"
 ```
 
-Do not commit `node_modules`, `.next`, local environment secrets, or generated build output. Do not commit unrelated changes accidentally.
 
-## Deployment
-
-Deploy using a platform compatible with Next.js, such as Vercel. Configure any required environment variables in the deployment platform if the implementation later uses them. Verify the production build locally before submitting.
