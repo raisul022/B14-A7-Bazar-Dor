@@ -138,71 +138,45 @@ function CategoryProductsContent() {
   const [error, setError] = useState("");
 
   
+
 const loadCategory = useCallback(async () => {
+  setLoading(true);
+  setError("");
+
   try {
     const [categoryResponse, productResponse] = await Promise.all([
       fetch(`${API_BASE}/categories`, { cache: "no-store" }),
-      fetch(`${API_BASE}/products`, { cache: "no-store" }),
+      fetch(
+        `${API_BASE}/products?category=${encodeURIComponent(slug)}`,
+        { cache: "no-store" }
+      ),
     ]);
 
     if (!categoryResponse.ok || !productResponse.ok) {
       throw new Error("সার্ভার থেকে তথ্য পাওয়া যায়নি।");
     }
 
-    const categoryData: unknown = await categoryResponse.json();
-    const productData: unknown = await productResponse.json();
+    const categoryData = await categoryResponse.json();
+    const productData = await productResponse.json();
 
-    const categoryList: unknown[] = Array.isArray(categoryData)
+    const categoryList = Array.isArray(categoryData)
       ? categoryData
-      : categoryData &&
-          typeof categoryData === "object" &&
-          "data" in categoryData &&
-          Array.isArray(categoryData.data)
-        ? categoryData.data
-        : [];
+      : categoryData?.data ?? [];
 
-    const productList: unknown[] = Array.isArray(productData)
+    const productList = Array.isArray(productData)
       ? productData
-      : productData &&
-          typeof productData === "object" &&
-          "data" in productData &&
-          Array.isArray(productData.data)
-        ? productData.data
-        : [];
+      : productData?.data ?? [];
 
-    const validCategories = categoryList.filter(
-      (item): item is Category =>
-        typeof item === "object" &&
-        item !== null &&
-        "slug" in item &&
-        "nameBn" in item
-    );
-
-    setCategories(validCategories);
-
-    const selectedCategory = validCategories.find(
-      (item) => item.slug === slug || item.id === slug
+    const selectedCategory = categoryList.find(
+      (item: Category) => item.slug === slug || item.id === slug
     );
 
     if (!selectedCategory) {
       throw new Error("এই ক্যাটাগরিটি পাওয়া যায়নি।");
     }
 
-    const validProducts = productList.filter(
-      (item): item is Product =>
-        typeof item === "object" &&
-        item !== null &&
-        "id" in item &&
-        "nameBn" in item &&
-        "today" in item
-    );
-
-    const categoryProducts = validProducts.filter(
-      (product) =>
-        product.category === selectedCategory.slug
-    );
-
-    setProducts(categoryProducts);
+    setCategories(categoryList);
+    setProducts(productList);
   } catch (err) {
     setError(
       err instanceof Error
@@ -213,7 +187,6 @@ const loadCategory = useCallback(async () => {
     setLoading(false);
   }
 }, [slug]);
-
 
  useEffect(() => {
   void Promise.resolve().then(() => loadCategory());
