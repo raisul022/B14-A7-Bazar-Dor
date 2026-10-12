@@ -11,14 +11,14 @@ import {
 } from "lucide-react";
 
 const categories = [
-  { name: "চাল", emoji: "🍚", href: "/category/chal" },
-  { name: "ডাল", emoji: "🫘", href: "/category/dal" },
-  { name: "তেল", emoji: "🛢️", href: "/category/tel" },
-  { name: "সবজি", emoji: "🥬", href: "/category/shobji" },
-  { name: "মাছ", emoji: "🐟", href: "/category/mach" },
-  { name: "মাংস", emoji: "🍗", href: "/category/mangsho" },
-  { name: "চিংড়ি-মুরগি", emoji: "🥛", href: "/category/others" },
-  { name: "মসলা", emoji: "🌶️", href: "/category/moshla" },
+  { name: "চাল", emoji: "🍚", href: "/categories/chal" },
+  { name: "ডাল", emoji: "🫘", href: "/categories/dal" },
+  { name: "তেল", emoji: "🛢️", href: "/categories/tel" },
+  { name: "সবজি", emoji: "🥬", href: "/categories/sobji" },
+  { name: "মাছ", emoji: "🐟", href: "/categories/mach" },
+  { name: "মাংস", emoji: "🍗", href: "/categories/mangsho" },
+  { name: "চিংড়ি-মুরগি", emoji: "🥛", href: "/categories/dim-dui" },
+  { name: "মসলা", emoji: "🌶️", href: "/categories/mosla" },
 ];
 
 const tickerItems = [
@@ -137,3 +137,5 @@ export default function SiteHeader() {
     </header>
   );
 }
+
+
