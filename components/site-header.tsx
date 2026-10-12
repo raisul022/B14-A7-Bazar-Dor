@@ -4,212 +4,136 @@
 import Link from "next/link";
 import { useState } from "react";
 import {
+  ShoppingBasket,
+  ChevronDown,
   Menu,
   X,
-  ShoppingBasket,
-  Search,
-  UserRound,
-  ChevronDown,
 } from "lucide-react";
 
 const categories = [
-  { label: "চাল ও ডাল", href: "/#products" },
-  { label: "তেল ও মসলা", href: "/#products" },
-  { label: "মাছ ও মাংস", href: "/#products" },
-  { label: "শাকসবজি", href: "/#products" },
-  { label: "ফলমূল", href: "/#products" },
+  { name: "চাল", emoji: "🍚", href: "/category/chal" },
+  { name: "ডাল", emoji: "🫘", href: "/category/dal" },
+  { name: "তেল", emoji: "🛢️", href: "/category/tel" },
+  { name: "সবজি", emoji: "🥬", href: "/category/shobji" },
+  { name: "মাছ", emoji: "🐟", href: "/category/mach" },
+  { name: "মাংস", emoji: "🍗", href: "/category/mangsho" },
+  { name: "চিংড়ি-মুরগি", emoji: "🥛", href: "/category/others" },
+  { name: "মসলা", emoji: "🌶️", href: "/category/moshla" },
 ];
 
-const mainLinks = [
-  { label: "হোম", href: "/" },
-  { label: "বাজারদর", href: "/#products" },
-  { label: "দাম তুলনা", href: "/#price-trends" },
-  { label: "আমাদের সম্পর্কে", href: "/#about" },
+const tickerItems = [
+  { name: "স্বর্ণচিনি চাল", price: "১৪৮ টাকা/কেজি", change: "২.৬%", up: true },
+  { name: "মিনিকেট চাল", price: "৯৯ টাকা/কেজি", change: "২.৯%", up: false },
+  { name: "বাটাম সাইজ চাল", price: "৬৬ টাকা/কেজি", change: "০.৬%", up: true },
+  { name: "মসুর ডাল", price: "১৪২ টাকা/কেজি", change: "১.৯%", up: true },
+  { name: "ছোলা", price: "১২০ টাকা/কেজি", change: "১.৪%", up: false },
+  { name: "আমন ডাল", price: "৮০ টাকা/কেজি", change: "২.০%", up: true },
 ];
 
 export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-
-  function closeMenu() {
-    setMenuOpen(false);
-  }
+  const [activeCategory, setActiveCategory] = useState("চাল");
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-white/95 backdrop-blur-md">
-      {/* Main navigation */}
-      <div className="container-bazardor">
-        <div className="flex min-h-[76px] items-center justify-between gap-4">
-          {/* Brand */}
-          <Link
-            href="/"
-            aria-label="বাজার দর হোম"
-            className="flex shrink-0 items-center gap-2.5"
-            onClick={closeMenu}
-          >
-            <span className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-              <ShoppingBasket size={25} strokeWidth={2.2} />
+    <header className="relative z-30 border-b border-[#dfe8df] bg-[#fbfcfa]">
+      {/* Main header */}
+      <div className="border-b border-[#edf1eb]">
+        <div className="container-bazardor flex h-[68px] items-center justify-between gap-4">
+          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#078345] text-white">
+              <ShoppingBasket className="h-6 w-6" />
             </span>
-
-            <span className="flex flex-col">
-              <span className="text-xl font-extrabold leading-tight tracking-tight text-primary sm:text-2xl">
+            <span>
+              <span className="block text-xl font-extrabold leading-tight text-[#202820]">
                 বাজার দর
               </span>
-              <span className="text-[10px] font-semibold tracking-[0.18em] text-muted-foreground sm:text-xs">
-                BAZARDOR
+              <span className="mt-0.5 block text-[11px] text-gray-500">
+                বাংলাদেশের বাজারদর এক নজরে
               </span>
             </span>
           </Link>
 
-          {/* Desktop links */}
-          <nav
-            aria-label="প্রধান নেভিগেশন"
-            className="hidden items-center gap-6 lg:flex"
-          >
-            {mainLinks.map((link, index) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className={`text-sm font-semibold transition-colors hover:text-primary ${
-                  index === 0 ? "text-primary" : "text-foreground/75"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Desktop actions */}
-          <div className="hidden shrink-0 items-center gap-2 md:flex">
-            <Link
-              href="/#products"
-              aria-label="পণ্য খুঁজুন"
-              className="flex size-10 items-center justify-center rounded-xl border border-border text-foreground transition-colors hover:bg-secondary hover:text-primary"
-            >
-              <Search size={19} />
-            </Link>
-
-            <Link
-              href="/login"
-              className="inline-flex h-10 items-center gap-2 rounded-xl px-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-            >
-              <UserRound size={17} />
-              লগইন
-            </Link>
-
-            <Link
-              href="/signup"
-              className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
-            >
-              নিবন্ধন
-            </Link>
+          <div className="hidden items-center gap-2 text-sm text-gray-600 sm:flex">
+            <span className="text-lg" aria-hidden="true">👤</span>
+            <span>ব্যবহারকারী</span>
+            <ChevronDown className="h-4 w-4" />
           </div>
 
-          {/* Mobile menu button */}
           <button
             type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
             aria-label={menuOpen ? "মেনু বন্ধ করুন" : "মেনু খুলুন"}
             aria-expanded={menuOpen}
-            aria-controls="mobile-navigation"
-            onClick={() => setMenuOpen((open) => !open)}
-            className="flex size-10 items-center justify-center rounded-xl border border-border text-foreground transition-colors hover:bg-secondary md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-700 md:hidden"
           >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
 
       {/* Category navigation */}
-      <div className="hidden border-t border-border/70 md:block">
-        <div className="container-bazardor flex h-11 items-center justify-between gap-4">
-          <Link
-            href="/#categories"
-            className="flex shrink-0 items-center gap-2 text-sm font-bold text-primary"
-          >
-            <ShoppingBasket size={17} />
-            সব ক্যাটাগরি
-            <ChevronDown size={15} />
-          </Link>
+      <nav aria-label="পণ্যের ক্যাটাগরি" className="hidden md:block">
+        <div className="container-bazardor flex min-h-12 items-center gap-1 overflow-x-auto">
+          {categories.map((category) => (
+            <Link
+              key={category.name}
+              href={category.href}
+              onClick={() => setActiveCategory(category.name)}
+              className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3.5 py-2 text-sm transition ${
+                activeCategory === category.name
+                  ? "bg-[#078345] font-semibold text-white"
+                  : "text-gray-700 hover:bg-emerald-50 hover:text-[#078345]"
+              }`}
+            >
+              <span aria-hidden="true">{category.emoji}</span>
+              {category.name}
+            </Link>
+          ))}
+        </div>
+      </nav>
 
-          <nav
-            aria-label="পণ্যের ক্যাটাগরি"
-            className="flex items-center gap-6 overflow-x-auto"
-          >
+      {/* Mobile menu */}
+      {menuOpen && (
+        <nav
+          aria-label="মোবাইল ক্যাটাগরি"
+          className="border-t border-gray-100 bg-white px-4 py-3 md:hidden"
+        >
+          <div className="container-bazardor grid grid-cols-2 gap-2">
             {categories.map((category) => (
               <Link
-                key={category.label}
+                key={category.name}
                 href={category.href}
-                className="shrink-0 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                onClick={() => {
+                  setActiveCategory(category.name);
+                  setMenuOpen(false);
+                }}
+                className="rounded-lg border border-gray-100 px-3 py-2.5 text-sm text-gray-700 hover:bg-emerald-50"
               >
-                {category.label}
+                {category.emoji} {category.name}
               </Link>
             ))}
-          </nav>
+          </div>
+        </nav>
+      )}
 
-          <span className="hidden shrink-0 text-xs font-medium text-muted-foreground xl:block">
-            সঠিক বাজারদর, সহজ সিদ্ধান্ত
-          </span>
+      {/* Market ticker: demo values until API integration */}
+      <div className="overflow-hidden border-t border-[#e7eee7] bg-white">
+        <div className="bazardor-ticker flex w-max items-center">
+          {[...tickerItems, ...tickerItems].map((item, index) => (
+            <div
+              key={`${item.name}-${index}`}
+              className="flex h-9 shrink-0 items-center gap-1.5 border-r border-[#edf1eb] px-4 text-xs sm:text-sm"
+            >
+              <span aria-hidden="true">🪙</span>
+              <span className="font-medium text-gray-700">{item.name}</span>
+              <span className="text-gray-600">{item.price}</span>
+              <span className={item.up ? "font-semibold text-red-500" : "font-semibold text-emerald-600"}>
+                {item.up ? "▲" : "▼"} {item.change}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
-
-      {/* Mobile navigation */}
-      {menuOpen && (
-        <div
-          id="mobile-navigation"
-          className="border-t border-border bg-white md:hidden"
-        >
-          <nav
-            aria-label="মোবাইল নেভিগেশন"
-            className="container-bazardor flex flex-col py-3"
-          >
-            {mainLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={closeMenu}
-                className="rounded-lg px-3 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary hover:text-primary"
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            <div className="my-2 border-t border-border" />
-
-            <p className="px-3 pb-1 pt-2 text-xs font-bold text-muted-foreground">
-              পণ্যের ক্যাটাগরি
-            </p>
-
-            {categories.map((category) => (
-              <Link
-                key={category.label}
-                href={category.href}
-                onClick={closeMenu}
-                className="rounded-lg px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-secondary hover:text-primary"
-              >
-                {category.label}
-              </Link>
-            ))}
-
-            <div className="mt-3 grid grid-cols-2 gap-2 border-t border-border pt-3">
-              <Link
-                href="/login"
-                onClick={closeMenu}
-                className="flex h-11 items-center justify-center gap-2 rounded-xl border border-border text-sm font-semibold"
-              >
-                <UserRound size={17} />
-                লগইন
-              </Link>
-
-              <Link
-                href="/signup"
-                onClick={closeMenu}
-                className="flex h-11 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground"
-              >
-                নিবন্ধন
-              </Link>
-            </div>
-          </nav>
-        </div>
-      )}
     </header>
   );
 }

@@ -246,3 +246,29 @@ img {
     scroll-behavior: auto !important;
   }
 }
+
+
+/* BazarDor homepage ticker */
+.bazardor-ticker {
+  animation: bazardor-marquee 38s linear infinite;
+}
+
+.bazardor-ticker:hover {
+  animation-play-state: paused;
+}
+
+@keyframes bazardor-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bazardor-ticker {
+    animation: none;
+  }
+}
