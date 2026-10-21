@@ -215,6 +215,11 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
+  const [banglaDate, setBanglaDate] = useState("");
+
+  useEffect(() => {
+    setBanglaDate(getBanglaDate());
+  }, []);
 
   async function loadProducts() {
     try {
@@ -325,7 +330,7 @@ export default function Home() {
         <section className="relative overflow-hidden rounded-2xl border border-[#dfe8df] bg-[#fbfcfa] px-5 py-7 sm:px-8 sm:py-9 lg:flex lg:min-h-[185px] lg:items-center lg:justify-between">
           <div className="relative z-10 max-w-2xl">
             <span className="inline-flex rounded-full bg-[#e6f4e9] px-3 py-1 text-xs font-semibold text-[#078345]">
-              {getBanglaDate()}
+              {banglaDate || "বাংলাদেশের বাজারদর"}
             </span>
 
             <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-[#202820] sm:text-3xl">
