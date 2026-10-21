@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -10,6 +9,7 @@ import {
   ArrowUpRight,
   RefreshCw,
 } from "lucide-react";
+import { getUnitBn } from "@/lib/utils";
 
 const API_BASE = "https://openapi.programming-hero.com/api/bazardor";
 
@@ -143,13 +143,13 @@ function ProductDetailContent() {
   const [error, setError] = useState("");
 
   const loadProduct = useCallback(async () => {
-  try {
-    const response = await fetch(`${API_BASE}/products/${id}`, {
+    try {
+      const response = await fetch(`${API_BASE}/products/${id}`, {
         cache: "no-store",
       });
 
       if (!response.ok) {
-        throw new Error("পণ্যের তথ্য পাওয়া যায়নি।");
+        throw new Error("পণ্যের তথ্য পাওয়া যায়নি।");
       }
 
       const result: unknown = await response.json();
@@ -171,7 +171,7 @@ function ProductDetailContent() {
         !("nameBn" in item) ||
         !("today" in item)
       ) {
-        throw new Error("পণ্যের তথ্য সঠিক format-এ পাওয়া যায়নি।");
+        throw new Error("পণ্যের তথ্য সঠিক format-এ পাওয়া যায়নি।");
       }
 
       setProduct(item as Product);
@@ -179,7 +179,7 @@ function ProductDetailContent() {
       setError(
         err instanceof Error
           ? err.message
-          : "একটি সমস্যা হয়েছে। আবার চেষ্টা করো।"
+          : "একটি সমস্যা হয়েছে। আবার চেষ্টা করো।"
       );
     } finally {
       setLoading(false);
@@ -187,8 +187,8 @@ function ProductDetailContent() {
   }, [id]);
 
   useEffect(() => {
-  void Promise.resolve().then(() => loadProduct());
-}, [loadProduct]);
+    void Promise.resolve().then(() => loadProduct());
+  }, [loadProduct]);
 
   if (loading) {
     return (
@@ -225,9 +225,9 @@ function ProductDetailContent() {
             role="alert"
             className="mt-5 rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700"
           >
-            <h1 className="font-bold">পণ্যের তথ্য লোড করা যায়নি</h1>
+            <h1 className="font-bold">পণ্যের তথ্য লোড করা যায়নি</h1>
             <p className="mt-2 text-sm">
-              {error || "এই পণ্যটি পাওয়া যায়নি।"}
+              {error || "এই পণ্যটি পাওয়া যায়নি।"}
             </p>
 
             <button
@@ -283,7 +283,7 @@ function ProductDetailContent() {
               </h1>
 
               <p className="mt-2 text-sm text-gray-500">
-                {product.unit ? `প্রতি ${product.unit}` : "প্রতি একক"}
+                {getUnitBn(product.unit)}
               </p>
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
@@ -328,17 +328,17 @@ function ProductDetailContent() {
             <PriceSummary
               label="সর্বনিম্ন দাম"
               value={priceRange.min}
-              description="API-তে দেওয়া সর্বনিম্ন দাম"
+              description="API-তে দেওয়া সর্বনিম্ন দাম"
             />
             <PriceSummary
               label="সর্বোচ্চ দাম"
               value={priceRange.max}
-              description="API-তে দেওয়া সর্বোচ্চ দাম"
+              description="API-তে দেওয়া সর্বোচ্চ দাম"
             />
             <PriceSummary
-              label="গড় দাম"
+              label="গড় দাম"
               value={priceRange.average}
-              description="API-তে গড় না থাকলে min/max থেকে হিসাব"
+              description="API-তে গড় না থাকলে min/max থেকে হিসাব"
             />
           </div>
         </section>
@@ -373,7 +373,7 @@ function ProductDetailContent() {
               বাজারভিত্তিক দাম
             </h2>
             <p className="mt-1 text-sm text-gray-500">
-              API-তে থাকা বাজার ও বিভাগ অনুযায়ী দামের তুলনা
+              API-তে থাকা বাজার ও বিভাগ অনুযায়ী দামের তুলনা
             </p>
           </div>
 

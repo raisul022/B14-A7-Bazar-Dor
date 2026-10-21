@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -10,6 +9,9 @@ import {
   Search,
   RefreshCw,
 } from "lucide-react";
+
+import Image from "next/image";
+import { getBanglaDate, getUnitBn } from "@/lib/utils";
 
 const API_URL = "https://openapi.programming-hero.com/api/bazardor/products";
 
@@ -105,19 +107,7 @@ function getEmoji(product: MarketProduct): string {
 }
 
 function getPriceLabel(unit?: string): string {
-  if (!unit) return "প্রতি একক";
-
-  const normalized = unit.toLowerCase();
-
-  if (normalized.includes("kg") || normalized.includes("কেজি")) {
-    return `প্রতি ${unit}`;
-  }
-
-  if (normalized.includes("liter") || normalized.includes("লিটার")) {
-    return `প্রতি ${unit}`;
-  }
-
-  return `প্রতি ${unit}`;
+  return getUnitBn(unit);
 }
 
 function ProductCard({ product }: { product: MarketProduct }) {
@@ -227,13 +217,13 @@ export default function Home() {
   const [search, setSearch] = useState("");
 
   async function loadProducts() {
-  try {
-    const response = await fetch(API_URL, {
+    try {
+      const response = await fetch(API_URL, {
         cache: "no-store",
       });
 
       if (!response.ok) {
-        throw new Error("পণ্যের তথ্য পাওয়া যায়নি।");
+        throw new Error("পণ্যের তথ্য পাওয়া যায়নি।");
       }
 
       const result: unknown = await response.json();
@@ -263,7 +253,7 @@ export default function Home() {
 
       if (validProducts.length === 0) {
         throw new Error(
-          "API থেকে product list পাওয়া যায়নি। Response format পরীক্ষা করো।"
+          "API থেকে product list পাওয়া যায়নি। Response format পরীক্ষা করো।"
         );
       }
 
@@ -272,16 +262,16 @@ export default function Home() {
       setError(
         err instanceof Error
           ? err.message
-          : "একটি সমস্যা হয়েছে। আবার চেষ্টা করো।"
+          : "একটি সমস্যা হয়েছে। আবার চেষ্টা করো।"
       );
     } finally {
       setLoading(false);
     }
   }
 
- useEffect(() => {
-  void Promise.resolve().then(() => loadProducts());
-}, []);
+  useEffect(() => {
+    void Promise.resolve().then(() => loadProducts());
+  }, []);
 
   const filteredProducts = useMemo(() => {
     const query = search.trim().toLocaleLowerCase();
@@ -335,7 +325,7 @@ export default function Home() {
         <section className="relative overflow-hidden rounded-2xl border border-[#dfe8df] bg-[#fbfcfa] px-5 py-7 sm:px-8 sm:py-9 lg:flex lg:min-h-[185px] lg:items-center lg:justify-between">
           <div className="relative z-10 max-w-2xl">
             <span className="inline-flex rounded-full bg-[#e6f4e9] px-3 py-1 text-xs font-semibold text-[#078345]">
-              বাংলাদেশের বাজারদর
+              {getBanglaDate()}
             </span>
 
             <h1 className="mt-3 text-2xl font-extrabold tracking-tight text-[#202820] sm:text-3xl">
@@ -356,9 +346,14 @@ export default function Home() {
           </div>
 
           <div className="mt-5 flex items-center justify-center lg:mt-0 lg:w-[30%]">
-            <div className="flex h-28 w-36 items-center justify-center rounded-2xl bg-[#f0f6ee] text-7xl sm:h-32 sm:w-40">
-              🧺
-            </div>
+            <Image
+              src="/bazar-hero.png"
+              alt="বাজারের ঝুড়ি"
+              width={200}
+              height={160}
+              className="h-28 w-auto rounded-2xl bg-[#f0f6ee] p-2 sm:h-32"
+              priority
+            />
           </div>
         </section>
 
@@ -419,7 +414,7 @@ export default function Home() {
             role="alert"
             className="mt-8 rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700"
           >
-            <p className="font-bold">পণ্যের তথ্য লোড করা যায়নি</p>
+            <p className="font-bold">পণ্যের তথ্য লোড করা যায়নি</p>
             <p className="mt-1">{error}</p>
             <button
               type="button"
@@ -436,7 +431,7 @@ export default function Home() {
         {!loading && !error && !search.trim() && (
           <>
             <ProductSection
-              title="আজ দাম বেড়েছে"
+              title="আজ দাম বেড়েছে"
               products={risingProducts}
             />
 
@@ -457,7 +452,7 @@ export default function Home() {
 
             <p className="mt-1 text-sm text-gray-500">
               {search.trim()
-                ? `মোট ${formatPrice(filteredProducts.length)}টি পণ্য পাওয়া গেছে`
+                ? `মোট ${formatPrice(filteredProducts.length)}টি পণ্য পাওয়া গেছে`
                 : `মোট ${formatPrice(products.length)}টি পণ্যের তালিকা`}
             </p>
           </div>
@@ -478,10 +473,10 @@ export default function Home() {
             <div className="rounded-2xl border border-dashed border-[#cbd8cb] bg-[#fbfcfa] px-4 py-10 text-center">
               <p className="text-3xl">🔎</p>
               <h3 className="mt-3 font-bold text-[#202820]">
-                কোনো পণ্য পাওয়া যায়নি
+                কোনো পণ্য পাওয়া যায়নি
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                অন্য কোনো নাম দিয়ে খুঁজে দেখো।
+                অন্য কোনো নাম দিয়ে খুঁজে দেখো।
               </p>
             </div>
           ) : null}
@@ -489,8 +484,8 @@ export default function Home() {
 
         {!loading && !error && (
           <p className="mt-6 rounded-xl border border-[#dfe8df] bg-[#fbfcfa] px-4 py-3 text-xs leading-5 text-gray-600">
-            প্রদর্শিত দাম ও পরিবর্তনের তথ্য BazarDor API থেকে নেওয়া হয়েছে।
-            বাজারে কেনাকাটার আগে স্থানীয় বিক্রেতার কাছ থেকে দাম যাচাই করে নাও।
+            প্রদর্শিত দাম ও পরিবর্তনের তথ্য BazarDor API থেকে নেওয়া হয়েছে।
+            বাজারে কেনাকাটার আগে স্থানীয় বিক্রেতার কাছ থেকে দাম যাচাই করে নাও।
           </p>
         )}
       </div>

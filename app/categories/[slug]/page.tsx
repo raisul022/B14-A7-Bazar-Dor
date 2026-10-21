@@ -1,10 +1,10 @@
-
 "use client";
 
 import Link from "next/link";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, RefreshCw } from "lucide-react";
 import { useParams } from "next/navigation";
+import { getUnitBn } from "@/lib/utils";
 
 const API_BASE = "https://openapi.programming-hero.com/api/bazardor";
 
@@ -91,7 +91,7 @@ function ProductCard({ product }: { product: Product }) {
             {product.nameBn}
           </h2>
           <p className="mt-1 text-xs text-gray-500">
-            {product.unit ? `প্রতি ${product.unit}` : "প্রতি একক"}
+            {getUnitBn(product.unit)}
           </p>
         </div>
       </div>
@@ -137,60 +137,58 @@ function CategoryProductsContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  
+  const loadCategory = useCallback(async () => {
+    setLoading(true);
+    setError("");
 
-const loadCategory = useCallback(async () => {
-  setLoading(true);
-  setError("");
+    try {
+      const [categoryResponse, productResponse] = await Promise.all([
+        fetch(`${API_BASE}/categories`, { cache: "no-store" }),
+        fetch(
+          `${API_BASE}/products?category=${encodeURIComponent(slug)}`,
+          { cache: "no-store" }
+        ),
+      ]);
 
-  try {
-    const [categoryResponse, productResponse] = await Promise.all([
-      fetch(`${API_BASE}/categories`, { cache: "no-store" }),
-      fetch(
-        `${API_BASE}/products?category=${encodeURIComponent(slug)}`,
-        { cache: "no-store" }
-      ),
-    ]);
+      if (!categoryResponse.ok || !productResponse.ok) {
+        throw new Error("সার্ভার থেকে তথ্য পাওয়া যায়নি।");
+      }
 
-    if (!categoryResponse.ok || !productResponse.ok) {
-      throw new Error("সার্ভার থেকে তথ্য পাওয়া যায়নি।");
+      const categoryData = await categoryResponse.json();
+      const productData = await productResponse.json();
+
+      const categoryList = Array.isArray(categoryData)
+        ? categoryData
+        : categoryData?.data ?? [];
+
+      const productList = Array.isArray(productData)
+        ? productData
+        : productData?.data ?? [];
+
+      const selectedCategory = categoryList.find(
+        (item: Category) => item.slug === slug || item.id === slug
+      );
+
+      if (!selectedCategory) {
+        throw new Error("এই ক্যাটাগরিটি পাওয়া যায়নি।");
+      }
+
+      setCategories(categoryList);
+      setProducts(productList);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "একটি সমস্যা হয়েছে। আবার চেষ্টা করো।"
+      );
+    } finally {
+      setLoading(false);
     }
+  }, [slug]);
 
-    const categoryData = await categoryResponse.json();
-    const productData = await productResponse.json();
-
-    const categoryList = Array.isArray(categoryData)
-      ? categoryData
-      : categoryData?.data ?? [];
-
-    const productList = Array.isArray(productData)
-      ? productData
-      : productData?.data ?? [];
-
-    const selectedCategory = categoryList.find(
-      (item: Category) => item.slug === slug || item.id === slug
-    );
-
-    if (!selectedCategory) {
-      throw new Error("এই ক্যাটাগরিটি পাওয়া যায়নি।");
-    }
-
-    setCategories(categoryList);
-    setProducts(productList);
-  } catch (err) {
-    setError(
-      err instanceof Error
-        ? err.message
-        : "একটি সমস্যা হয়েছে। আবার চেষ্টা করো।"
-    );
-  } finally {
-    setLoading(false);
-  }
-}, [slug]);
-
- useEffect(() => {
-  void Promise.resolve().then(() => loadCategory());
-}, [loadCategory]);
+  useEffect(() => {
+    void Promise.resolve().then(() => loadCategory());
+  }, [loadCategory]);
 
   const category = categories.find(
     (item) => item.slug === slug || item.id === slug
@@ -237,7 +235,7 @@ const loadCategory = useCallback(async () => {
           </h2>
 
           <label className="flex items-center gap-3 rounded-xl border border-[#dfe8df] bg-[#fbfcfa] px-3 py-2 text-sm">
-            <span className="shrink-0 text-gray-600">দাম অনুযায়ী</span>
+            <span className="shrink-0 text-gray-600">দাম অনুযায়ী</span>
             <select
               value={sort}
               onChange={(event) => setSort(event.target.value)}
@@ -266,7 +264,7 @@ const loadCategory = useCallback(async () => {
             role="alert"
             className="mt-5 rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700"
           >
-            <p className="font-bold">তথ্য লোড করা যায়নি</p>
+            <p className="font-bold">তথ্য লোড করা যায়নি</p>
             <p className="mt-1">{error}</p>
             <button
               type="button"
@@ -291,7 +289,7 @@ const loadCategory = useCallback(async () => {
           <div className="mt-5 rounded-2xl border border-dashed border-[#cbd8cb] bg-[#fbfcfa] px-4 py-10 text-center">
             <p className="text-3xl">🛒</p>
             <h2 className="mt-3 font-bold text-[#202820]">
-              এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি
+              এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি
             </h2>
           </div>
         )}
@@ -299,7 +297,6 @@ const loadCategory = useCallback(async () => {
     </main>
   );
 }
-
 
 export default function CategoryProductsPage() {
   return (
