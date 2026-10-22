@@ -1,45 +1,43 @@
-# BazarDor — Programming Hero Assignment 07
+# 🛒 বাজার দর (BazarDor) — Programming Hero Assignment 07
 
-BazarDor is a responsive Next.js web application developed for Programming Hero Assignment 07. It helps users explore everyday product prices, compare market information, and browse products by category through a user-friendly interface.
+BazarDor is a responsive Next.js web application developed for Programming Hero Assignment 07. It helps users explore everyday product prices in Bangladesh, compare market information, and browse products by category through a user-friendly interface — with full authentication, protected routes, and social login.
 
 ## Live Demo
 
 - **Live Website:** https://bazardor-alpha-six.vercel.app
 - **GitHub Repository:** https://github.com/raisul022/B14-A7-Bazar-Dor
 
-## Features
+## Key Features
 
-- Responsive homepage and navigation for desktop and mobile devices.
-- Product listing with search functionality.
-- Dedicated sections for rising and falling product prices.
-- Category listing and category-based product filtering.
-- Product detail pages with price history and market-wise price information.
-- Price comparison information, including minimum, maximum, and average prices where available.
-- Bengali number formatting for product prices.
-- Email and password authentication using Better Auth.
-- Profile page with user information and name update functionality.
-- Protected profile access for authenticated users.
+1. **Real market prices at a glance** — homepage with hero section, live price ticker, and dedicated "দাম বেড়েছে" (rising) / "দাম কমেছে" (falling) sections.
+2. **Smart browsing** — product search, category-based filtering, and category pages for rice, dal, oil, vegetables, fish, meat, and more.
+3. **Deep price insight** — product detail pages with price history, market-wise prices, and min/max/average comparison — all in Bengali number format.
+4. **Full authentication** — email/password plus Google and GitHub social login (Better Auth), with protected routes that redirect guests to sign in and return them afterwards.
+5. **Polished UX** — session-aware navbar, profile page with name update, custom Bengali 404 page, loading/error/empty states, fully responsive on mobile.
+
+## More Features
+
+- Bengali date badge in the header.
+- Category shortcuts strip under the header.
 - Logout functionality.
-- Loading indicators, error messages, retry options, and empty states.
 - Reusable UI components and responsive layouts.
 
 ## Tech Stack
 
-- Next.js 16
+- Next.js 16 (App Router, Turbopack)
 - React 19
 - TypeScript
 - Tailwind CSS 4
-- Better Auth
-- PostgreSQL
+- Better Auth (email/password + Google + GitHub)
+- PostgreSQL (`pg`)
 - Lucide React
+- Deployed on Vercel
 
 ## Getting Started
 
 ### Prerequisites
 
 Install Node.js and npm.
-
-Verify your installation:
 
 ```bash
 node --version
@@ -61,11 +59,29 @@ npm install
 
 ### 3. Configure environment variables
 
-Create a `.env.local` file in the project root and configure the required environment variables for the authentication and database setup.
+Create a `.env.local` file in the project root:
 
-Use the project's existing environment variable names and the appropriate values for your own database and authentication configuration.
+```text
+DATABASE_URL=your_postgresql_connection_string
+BETTER_AUTH_SECRET=your_random_secret
+BETTER_AUTH_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+```
 
-**Security note:** Never commit `.env.local`, database credentials, authentication secrets, or OAuth secrets to GitHub.
+Google and GitHub OAuth apps must include both callback URLs:
+
+```text
+http://localhost:3000/api/auth/callback/google
+https://your-live-domain.vercel.app/api/auth/callback/google
+http://localhost:3000/api/auth/callback/github
+https://your-live-domain.vercel.app/api/auth/callback/github
+```
+
+**Security note:** Never commit `.env.local` or any secrets to GitHub.
 
 ### 4. Start the development server
 
@@ -74,8 +90,6 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-Stop the development server with `Ctrl+C`.
 
 ## Available Scripts
 
@@ -86,13 +100,6 @@ Stop the development server with `Ctrl+C`.
 | `npm run build` | Create a production build |
 | `npm run start` | Start the production server after building |
 
-Before submitting, run:
-
-```bash
-npm run lint
-npm run build
-```
-
 ## API Integration
 
 **API Base URL:**
@@ -100,8 +107,6 @@ npm run build
 ```text
 https://openapi.programming-hero.com/api/bazardor
 ```
-
-The application uses the following API endpoints:
 
 | Endpoint | Purpose |
 |---|---|
@@ -117,23 +122,15 @@ The application includes loading and error handling for API requests.
 
 ```text
 app/
-├── api/
-│   └── auth/
-│       └── [...all]/
-│           └── route.ts
+├── api/auth/[...all]/route.ts
 ├── categories/
-│   ├── [slug]/
-│   │   └── page.tsx
+│   ├── [slug]/page.tsx
 │   └── page.tsx
-├── products/
-│   └── [id]/
-│       └── page.tsx
-├── profile/
-│   └── page.tsx
-├── signin/
-│   └── page.tsx
-├── signup/
-│   └── page.tsx
+├── products/[id]/page.tsx
+├── profile/page.tsx
+├── signin/page.tsx
+├── signup/page.tsx
+├── not-found.tsx        ← custom 404 page
 ├── globals.css
 ├── layout.tsx
 └── page.tsx
@@ -145,40 +142,50 @@ components/
 lib/
 ├── api.ts
 ├── auth-client.ts
-├── auth.ts
-└── utils.ts
+├── auth.ts              ← Better Auth server config (OAuth providers)
+└── utils.ts             ← Bengali number/date helpers
+
+proxy.ts                 ← route protection (Next.js proxy/middleware)
 
 public/
 └── Static assets
-
-README.md
 ```
 
 ## Authentication
 
-BazarDor uses Better Auth for email and password authentication.
+BazarDor uses Better Auth with:
 
-Implemented account features include:
+- **Email + password** registration and sign in
+- **Google login**
+- **GitHub login**
+- Session-aware navigation, profile access, profile name updates, and logout
 
-- Account registration
-- Sign in
-- Session-aware navigation
-- Profile access
-- Profile name updates
-- Logout
+Both OAuth apps are configured with localhost and production callback URLs, so social login works in development and on the live site.
 
-Google and GitHub authentication require additional OAuth provider credentials and configuration. They should not be considered active unless that configuration has been completed and tested.
+## Route Protection
+
+`proxy.ts` at the project root protects authenticated pages (such as the profile and product detail pages). Unauthenticated users are redirected to:
+
+```text
+/signin?callbackUrl=<original-path>
+```
+
+After a successful sign in, users are returned to the page they originally wanted.
+
+## Deployment
+
+- Hosted on **Vercel**: https://bazardor-alpha-six.vercel.app
+- Pushes to the `main` branch trigger an automatic production deployment.
+- All environment variables are configured in the Vercel dashboard for the **Production** environment.
 
 ## Quality Checks
-
-Run the lint and production build commands before submitting the project:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-Both checks have passed during development. Run them again after making further changes.
+Both checks pass. Re-run them after making changes.
 
 ## Git Workflow
 
@@ -187,8 +194,8 @@ Use descriptive commit messages for meaningful changes.
 ```bash
 git status
 git add .
-git commit -m "feat: complete profile page"
-git push origin main
+git commit -m "feat: your change description"
+git push origin master:main
 ```
 
 Do not create empty commits just to increase the commit count.
