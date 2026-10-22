@@ -1,13 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { ArrowLeft, LoaderCircle } from "lucide-react";
 
-export default function SigninPage() {
+function SigninForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const callbackParam = searchParams.get("callbackUrl");
+  const callbackUrl =
+    callbackParam && callbackParam.startsWith("/") ? callbackParam : "/";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,14 +32,14 @@ export default function SigninPage() {
       });
 
       if (result.error) {
-        setError(result.error.message || "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।");
+        setError(result.error.message || "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।");
         return;
       }
 
-      router.push("/");
+      router.push(callbackUrl);
       router.refresh();
     } catch {
-      setError("সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করো।");
+      setError("সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করো।");
     } finally {
       setLoading(false);
     }
@@ -47,15 +52,15 @@ export default function SigninPage() {
     try {
       const result = await authClient.signIn.social({
         provider,
-        callbackURL: "/",
+        callbackURL: callbackUrl,
       });
 
       if (result.error) {
-        setError(result.error.message || "Social login চালু করা যায়নি।");
+        setError(result.error.message || "Social login চালু করা যায়নি।");
         setSocialLoading("");
       }
     } catch {
-      setError("Social login চালু করা যায়নি। পরে আবার চেষ্টা করো।");
+      setError("Social login চালু করা যায়নি। পরে আবার চেষ্টা করো।");
       setSocialLoading("");
     }
   }
@@ -93,7 +98,7 @@ export default function SigninPage() {
 
             <div>
               <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-[#202820]">
-                পাসওয়ার্ড
+                পাসওয়ার্ড
               </label>
               <input
                 id="password"
@@ -138,7 +143,7 @@ export default function SigninPage() {
               className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#dfe8df] px-2 py-2 text-sm font-semibold text-[#202820] transition hover:bg-emerald-50 disabled:opacity-60"
             >
               <span className="font-bold text-base text-[#4285F4]">G</span>
-              {socialLoading === "google" ? "অপেক্ষা করুন..." : "Google দিয়ে চালিয়ে যান"}
+              {socialLoading === "google" ? "অপেক্ষা করুন..." : "Google দিয়ে চালিয়ে যান"}
             </button>
 
             <button
@@ -148,7 +153,7 @@ export default function SigninPage() {
               className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-[#dfe8df] px-2 py-2 text-sm font-semibold text-[#202820] transition hover:bg-emerald-50 disabled:opacity-60"
             >
               <span className="text-base font-bold">●</span>
-              {socialLoading === "github" ? "অপেক্ষা করুন..." : "GitHub দিয়ে চালিয়ে যান"}
+              {socialLoading === "github" ? "অপেক্ষা করুন..." : "GitHub দিয়ে চালিয়ে যান"}
             </button>
           </div>
 
@@ -168,5 +173,19 @@ export default function SigninPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function SigninPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-[calc(100vh-200px)] items-center justify-center px-4 py-12">
+          <p className="text-sm text-gray-500">সাইন ইন পেজ লোড হচ্ছে...</p>
+        </main>
+      }
+    >
+      <SigninForm />
+    </Suspense>
   );
 }
